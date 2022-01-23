@@ -42,7 +42,7 @@ for i in range(len(reference_users_list)):
 
     reference_users_list[i]['books'] = []
 
-    for j in reference_books_list[count_i:count_i + c]:
+    for j in reference_books_list[count_i : count_i + c]:
         reference_users_list[i]['books'].append(j)
     count_i += c
 
