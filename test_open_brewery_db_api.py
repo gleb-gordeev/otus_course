@@ -5,25 +5,36 @@ from jsonschema import validate
 url = 'https://api.openbrewerydb.org/breweries?'
 
 
-@pytest.mark.parametrize("filter", ['by_city=san_diego',
-                                    'by_dist=38.8977,77.0365',
-                                    'by_name=cooper',
-                                    'by_state=ohio',
-                                    'by_postal=44107',
-                                    'by_type=micro',
-                                    'page=15',
-                                    'per_page=25'
-                                    ])
+@pytest.mark.parametrize(
+    "filter",
+    [
+        'by_city=san_diego',
+        'by_dist=38.8977,77.0365',
+        'by_name=cooper',
+        'by_state=ohio',
+        'by_postal=44107',
+        'by_type=micro',
+        'page=15',
+        'per_page=25',
+    ],
+)
 def test_get_status_code_with_filters(filter):
     r = requests.get(url + filter)
     assert r.status_code == 200
 
 
 def test_status_with_all_filters():
-    r = requests.get(url + 'by_city=san_diego' + '&by_dist=38.8977,77.0365' +
-                            '&by_name=cooper' + '&by_state=ohio' +
-                            '&by_postal=44107' + '&by_type=micro' +
-                            '&page=15' + '&per_page=25')
+    r = requests.get(
+        url
+        + 'by_city=san_diego'
+        + '&by_dist=38.8977,77.0365'
+        + '&by_name=cooper'
+        + '&by_state=ohio'
+        + '&by_postal=44107'
+        + '&by_type=micro'
+        + '&page=15'
+        + '&per_page=25'
+    )
     assert r.status_code == 200
 
 

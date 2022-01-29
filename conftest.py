@@ -8,12 +8,7 @@ def pytest_addoption(parser):
         default="https://ya.ru",
         help="This is request url",
     ),
-    parser.addoption(
-        '--status_code',
-        action='store',
-        default='200',
-        help='This is status code'
-    )
+    parser.addoption('--status_code', action='store', default='200', help='This is status code')
 
 
 @pytest.fixture(scope="session")
