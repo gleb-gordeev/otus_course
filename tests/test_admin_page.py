@@ -1,55 +1,58 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from page_objects.AdminPage import AdminPage
+import helpers
+import time
 import pytest
 
-url = "https://demo.opencart.com/admin/"
+
+url = "http://localhost/opencart/upload/admin/"
+
+
+def test_add_new_product(browser):
+    r_device_name = helpers.random_string()
+    browser.get(url)
+    AdminPage(browser).login_with("admin", "admin")
+    AdminPage(browser).click_catalog()
+    AdminPage(browser).click_products()
+    AdminPage(browser).click_add_new()
+    AdminPage(browser).new_device_check(r_device_name, "test2", "test3", r_device_name)
+    assert AdminPage(browser).search_element(r_device_name) == r_device_name
+
+
+def test_del_product(browser):
+    browser.get(url)
+    AdminPage(browser).login_with("admin", "admin")
+    AdminPage(browser).click_catalog()
+    AdminPage(browser).click_products()
+    deleted_device = AdminPage(browser).first_device()
+    AdminPage(browser).delete_device()
+    new_device = AdminPage(browser).first_device()
+    assert new_device != deleted_device
 
 
 def test_check_header_logo(browser):
     browser.get(url)
-    wait = WebDriverWait(browser, 3, poll_frequency=1)
-    wait.until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, "#header-logo>a>img")),
-        message='Logo not found',
-    )
+    AdminPage(browser).check_logo()
 
 
 def test_check_help_text(browser):
     browser.get(url)
-    wait = WebDriverWait(browser, 3, poll_frequency=1)
-    el = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "h1.panel-title")))
-    wait.until(
-        EC.text_to_be_present_in_element(
-            (By.CSS_SELECTOR, "h1.panel-title"), "Please enter your login details."
-        )
-    )
-    assert el.text == "Please enter your login details."
-
-
-@pytest.mark.parametrize("field", ['[name="username"]', '[name="password"]'])
-def test_check_fields(browser, field):
-    browser.get(url)
-    wait = WebDriverWait(browser, 3, poll_frequency=1)
-    el = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, field)))
-    el.click()
+    AdminPage(browser).check_help_text()
 
 
 def test_check_forgot_password(browser):
     browser.get(url)
-    wait = WebDriverWait(browser, 3, poll_frequency=1)
-    el = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "span.help-block")))
-    wait.until(
-        EC.text_to_be_present_in_element(
-            (By.CSS_SELECTOR, "span.help-block"), "Forgotten Password"
-        )
-    )
-    el.click()
-    assert el.text == "Forgotten Password"
+    AdminPage(browser).check_forgot_password()
 
 
 def test_check_login_button(browser):
     browser.get(url)
-    wait = WebDriverWait(browser, 3, poll_frequency=1)
-    el = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "span.help-block")))
-    el.click()
+    AdminPage(browser).check_login_button()
+
+
+
+
+
+
