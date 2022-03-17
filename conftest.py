@@ -1,5 +1,7 @@
 import pytest
 import os
+import logging
+import datetime
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -7,27 +9,45 @@ from selenium.webdriver.chrome.service import Service
 DRIVERS = "C:/drivers"
 
 
-def choose_browser(browser):
-    if browser == "chrome":
-        service = Service(executable_path=os.path.join(DRIVERS, "chromedriver"))
-        driver = webdriver.Chrome(service=service)
-    elif browser == "firefox":
-        service = Service(executable_path=os.path.join(DRIVERS, "geckodriver"))
-        driver = webdriver.Firefox(service=service)
-    elif browser == "opera":
-        driver = webdriver.Opera(executable_path=f"{DRIVERS}/operadriver")
-    else:
-        raise Exception("Driver not supported")
-    return driver
-
-
 def pytest_addoption(parser):
-    parser.addoption("--browser", default="chrome")
+    parser.addoption("--browser", action="store", default="chrome")
+    parser.addoption("--executor", action="store", default="127.0.0.1")
     parser.addoption("--url", default="https://demo.opencart.com/")
+    parser.addoption("--log_level", action="store", default="DEBUG")
 
 
 @pytest.fixture
 def browser(request):
-    driver = choose_browser(request.config.getoption("--browser"))
-    request.addfinalizer(driver.quit)
+    driver = request.config.getoption("--browser")
+    executor = request.config.getoption("--executor")
+    log_level = request.config.getoption("--log_level")
+
+    logger = logging.getLogger('driver')
+    test_name = request.node.name
+
+    logger.addHandler(logging.FileHandler(f"logs/{test_name}.log"))
+    logger.setLevel(level=log_level)
+
+    logger.info("===> Test {} started at {}".format(test_name, datetime.datetime.now()))
+
+    if browser == "chrome":
+        driver = webdriver.Chrome(executable_path=f"{DRIVERS}/chromedriver")
+    elif browser == "firefox":
+        driver = webdriver.Firefox(executable_path=f"{DRIVERS}/geckodriver")
+    else:
+        driver = webdriver.Remote(
+            command_executor="http://{}:4444/wd/hub".format(executor),
+            desired_capabilities={"browserName": browser}
+        )
+
+    driver.test_name = test_name
+    driver.log_level = log_level
+
+    logger.info("Browser:{}".format(browser, driver.desired_capabilities))
+
+    def fin():
+        driver.quit()
+        logger.info("===> Test {} finished at {}".format(test_name, datetime.datetime.now()))
+
+    request.addfinalizer(fin)
     return driver

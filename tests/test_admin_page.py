@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from page_objects.AdminPage import AdminPage
+from page_objects import AdminPage
 import helpers
 import time
 import pytest
