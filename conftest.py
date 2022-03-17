@@ -1,10 +1,9 @@
-import pytest
-import os
-import logging
 import datetime
+import os
+import pytest
+import logging
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 
 DRIVERS = "C:/drivers"
 
@@ -12,13 +11,12 @@ DRIVERS = "C:/drivers"
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
     parser.addoption("--executor", action="store", default="127.0.0.1")
-    parser.addoption("--url", default="https://demo.opencart.com/")
     parser.addoption("--log_level", action="store", default="DEBUG")
 
 
 @pytest.fixture
 def browser(request):
-    driver = request.config.getoption("--browser")
+    browser = request.config.getoption("--browser")
     executor = request.config.getoption("--executor")
     log_level = request.config.getoption("--log_level")
 

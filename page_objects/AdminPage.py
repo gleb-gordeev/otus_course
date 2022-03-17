@@ -28,61 +28,59 @@ class AdminPage(BasePage, SuccessAlert):
     DELETE_BUTTON = (By.CSS_SELECTOR, "div.pull-right>:nth-child(4)")
 
     def check_logo(self):
-        self._element(self.LOGO)
+        self.is_present(self.LOGO)
 
     def check_help_text(self):
-        self._element(self.HELP_TEXT)
+        self.is_present(self.HELP_TEXT)
 
     def check_forgot_password(self):
-        self._element(self.FORGOT_PASSWORD)
+        self.is_present(self.FORGOT_PASSWORD)
 
     def check_login_button(self):
-        self._element(self.LOGIN_BUTTON)
+        self.is_present(self.LOGIN_BUTTON)
 
     def login_with(self, username, password):
-        self._element(self.INPUT_LOGIN).clear()
-        self._element(self.INPUT_LOGIN).send_keys(username)
-        self._element(self.INPUT_PASSWORD).clear()
-        self._element(self.INPUT_PASSWORD).send_keys(password)
-        self._element(self.LOGIN_BUTTON).click()
+        self.input_and_submit(self.INPUT_LOGIN, username)
+        self.input_and_submit(self.INPUT_PASSWORD, password)
+        self.click(self.LOGIN_BUTTON)
 
     def click_catalog(self):
-        self._click(self.CATALOG_BUTTON)
+        self.click(self.CATALOG_BUTTON)
 
     def click_products(self):
-        self._click(self.CATALOG_PRODUCTS_BUTTON)
+        self.click(self.CATALOG_PRODUCTS_BUTTON)
 
     def click_add_new(self):
-        self._click(self.ADD_NEW_BUTTON)
+        self.click(self.ADD_NEW_BUTTON)
 
     def new_device_check(self, category, device_desc, tag, model):
-        self._element(self.CATEGORY_NAME).send_keys(category)
-        self._element(self.DEVICE_DESCRIPTION).send_keys(device_desc)
-        self._element(self.META_TAG).send_keys(tag)
-        self._element(self.DATA_TAB).click()
-        self._element(self.MODEL_NAME).send_keys(model)
-        self._click(self.SAVE_DEVICE)
+        self.is_present(self.CATEGORY_NAME).send_keys(category)
+        self.is_present(self.DEVICE_DESCRIPTION).send_keys(device_desc)
+        self.is_present(self.META_TAG).send_keys(tag)
+        self.is_present(self.DATA_TAB).click()
+        self.is_present(self.MODEL_NAME).send_keys(model)
+        self.is_present(self.SAVE_DEVICE)
 
     def delete_device(self):
-        self._click(self.DEVICE_FOR_DELETE)
-        self._click(self.DELETE_BUTTON)
+        self.click(self.DEVICE_FOR_DELETE)
+        self.click(self.DELETE_BUTTON)
         SuccessAlert(self.browser).alert_confirm()
 
     def first_device(self):
-        return self._element(self.DEVICE_NAME).text
+        return self.is_present(self.DEVICE_NAME).text
 
     def last_device(self):
-        return self._element(self.LAST_DEVICE).text
+        return self.is_present(self.LAST_DEVICE).text
 
     def last_page(self):
-        return self._click(self.LAST_PAGE)
+        return self.click(self.LAST_PAGE)
 
     def search_element(self, r_device_name):
         try:
-            search_device = self._element(
+            search_device = self.is_present(
                     (By.XPATH, f"//*[text()='{r_device_name}']")).text
-        except selenium.common.exceptions.NoSuchElementException:
+        except NoSuchElementException:
             self.last_page()
-            search_device = self._element(
+            search_device = self.is_present(
                     (By.XPATH, f"//*[text()='{r_device_name}']")).text
         return search_device

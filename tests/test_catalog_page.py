@@ -1,6 +1,3 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from page_objects.CatalogPage import CatalogPage
 
 url = "https://demo.opencart.com/index.php?route=product/category&path=20"

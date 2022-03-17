@@ -1,19 +1,14 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from page_objects import AdminPage
+from page_objects.AdminPage import AdminPage
 import helpers
-import time
-import pytest
 
 
-url = "http://localhost/opencart/upload/admin/"
+url = "http://localhost/admin/"
 
 
 def test_add_new_product(browser):
     r_device_name = helpers.random_string()
     browser.get(url)
-    AdminPage(browser).login_with("admin", "admin")
+    AdminPage(browser).login_with("user", "bitnami")
     AdminPage(browser).click_catalog()
     AdminPage(browser).click_products()
     AdminPage(browser).click_add_new()
@@ -23,7 +18,7 @@ def test_add_new_product(browser):
 
 def test_del_product(browser):
     browser.get(url)
-    AdminPage(browser).login_with("admin", "admin")
+    AdminPage(browser).login_with("user", "bitnami")
     AdminPage(browser).click_catalog()
     AdminPage(browser).click_products()
     deleted_device = AdminPage(browser).first_device()
@@ -50,9 +45,3 @@ def test_check_forgot_password(browser):
 def test_check_login_button(browser):
     browser.get(url)
     AdminPage(browser).check_login_button()
-
-
-
-
-
-

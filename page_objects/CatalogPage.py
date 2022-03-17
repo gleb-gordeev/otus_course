@@ -10,13 +10,13 @@ class CatalogPage(BasePage):
     PRICES_LIST = (By.CSS_SELECTOR, "div>p.price")
 
     def check_header(self):
-        self._element(self.HEADER)
+        self.is_present(self.HEADER)
 
     def check_sort(self):
-        self._element(self.SORT)
+        self.is_present(self.SORT)
 
     def check_show(self):
-        self._element(self.SHOW)
+        self.is_present(self.SHOW)
 
     def check_products_list(self):
         all_list = self._elements(self.PRODUCTS_LIST)
@@ -27,4 +27,3 @@ class CatalogPage(BasePage):
         all_list = self._elements(self.PRICES_LIST)
         list_elements = [x.text for x in all_list if len(x.text) > 0]
         return list_elements
-

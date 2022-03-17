@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 
 
-
 class RegisterPage(BasePage):
     HEADER = (By.CSS_SELECTOR, "div#content>h1")
     HELP_TEXT = (By.CSS_SELECTOR, "div#content>p")
@@ -20,41 +19,39 @@ class RegisterPage(BasePage):
     EDIT_ACCOUNT = (By.CSS_SELECTOR, ".list-group>:nth-child(2)")
 
     def check_header(self):
-        self._element(self.HEADER)
+        self.is_present(self.HEADER)
 
     def check_help_text(self):
-        self._element(self.HELP_TEXT)
+        self.is_present(self.HELP_TEXT)
 
     def check_first_name(self):
-        self._element(self.FIRST_NAME)
+        self.is_present(self.FIRST_NAME)
 
     def check_last_name(self):
-        self._element(self.LAST_NAME)
+        self.is_present(self.LAST_NAME)
 
     def check_email(self):
-        self._element(self.EMAIL)
+        self.is_present(self.EMAIL)
 
     def fill_register_page(self, first_name, last_name, password, email, phone):
-        self._element(self.FIRST_NAME).send_keys(first_name)
-        self._element(self.LAST_NAME).send_keys(last_name)
-        self._element(self.EMAIL).send_keys(email)
-        self._element(self.PHONE).send_keys(phone)
-        self._element(self.PASSWORD).send_keys(password)
-        self._element(self.PASSWORD_CONFIRM).send_keys(password)
-        self._click(self.POLICY_CHECKBOX)
-        self._click(self.CONTINUE_BUTTON)
+        self.input_and_submit(self.FIRST_NAME, first_name)
+        self.input_and_submit(self.LAST_NAME, last_name)
+        self.input_and_submit(self.EMAIL, email)
+        self.input_and_submit(self.PHONE, phone)
+        self.input_and_submit(self.PASSWORD, password)
+        self.input_and_submit(self.PASSWORD_CONFIRM, password)
+        self.click(self.POLICY_CHECKBOX)
+        self.click(self.CONTINUE_BUTTON)
 
     def check_account(self, first_name, last_name, email, phone):
-        self._click(self.MY_ACCOUNT_MENU)
-        self._click(self.MY_ACCOUNT_BUTTON)
-        self._click(self.EDIT_ACCOUNT)
-        assert self._element(self.FIRST_NAME).get_attribute("value") == first_name
-        assert self._element(self.LAST_NAME).get_attribute("value") == last_name
-        assert self._element(self.EMAIL).get_attribute("value") == email
-        assert self._element(self.PHONE).get_attribute("value") == phone
+        self.click(self.MY_ACCOUNT_MENU)
+        self.click(self.MY_ACCOUNT_BUTTON)
+        self.click(self.EDIT_ACCOUNT)
+        assert self.is_present(self.FIRST_NAME).get_attribute("value") == first_name
+        assert self.is_present(self.LAST_NAME).get_attribute("value") == last_name
+        assert self.is_present(self.EMAIL).get_attribute("value") == email
+        assert self.is_present(self.PHONE).get_attribute("value") == phone
 
     def logout(self):
-        self._click(self.MENU_MY_ACCOUNT)
-        self._click(self.LOGOUT_BUTTON)
-
-
+        self.click(self.MY_ACCOUNT_MENU)
+        self.click(self.LOGOUT_BUTTON)
