@@ -2,6 +2,7 @@ import datetime
 import os
 import pytest
 import logging
+import allure
 
 from selenium import webdriver
 
@@ -10,8 +11,26 @@ DRIVERS = "C:/drivers"
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--executor", action="store", default="127.0.0.1")
+    parser.addoption("--executor", action="store", default="192.168.1.105")
     parser.addoption("--log_level", action="store", default="DEBUG")
+    parser.addoption("--mobile", action="store_true")
+    parser.addoption("--bversion")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def get_environment(pytestconfig, request):
+    props = {
+        'Browser': request.config.getoption("--browser"),
+        'Browser.Version': request.config.getoption("--bversion"),
+        'Executor': request.config.getoption("--executor"),
+        'Stand': 'Production',
+        'Shell': os.getenv('SHELL')
+    }
+
+    tests_root = pytestconfig.rootdir
+    with open(f'{tests_root}/allure-results/environment.properties', 'w') as f:
+        env_props = '\n'.join([f'{k}={v}' for k, v in props.items()])
+        f.write(env_props)
 
 
 @pytest.fixture
@@ -19,6 +38,8 @@ def browser(request):
     browser = request.config.getoption("--browser")
     executor = request.config.getoption("--executor")
     log_level = request.config.getoption("--log_level")
+    mobile = request.config.getoption("--mobile")
+    version = request.config.getoption("--bversion")
 
     logger = logging.getLogger('driver')
     test_name = request.node.name
@@ -28,15 +49,34 @@ def browser(request):
 
     logger.info("===> Test {} started at {}".format(test_name, datetime.datetime.now()))
 
-    if browser == "chrome":
-        driver = webdriver.Chrome(executable_path=f"{DRIVERS}/chromedriver")
-    elif browser == "firefox":
-        driver = webdriver.Firefox(executable_path=f"{DRIVERS}/geckodriver")
+    if executor == "local":
+        caps = {'goog:chromeOptions': {}}
+        if mobile:
+            caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
+        driver = webdriver.Chrome(desired_capabilities=caps)
+
     else:
+        executor_url = f"http://{executor}:4444/wd/hub"
+
+        caps = {
+            "browserName": browser,
+            "name": "Gleb Gordeev",
+            "selenoid:options": {
+                    "enableVNC": True,
+                    "enableVideo": False,
+                    "enableLog": True
+                },
+            'goog:chromeOptions': {}
+        }
+        if browser == "chrome" and mobile:
+            caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
+
         driver = webdriver.Remote(
-            command_executor="http://{}:4444/wd/hub".format(executor),
-            desired_capabilities={"browserName": browser}
+            command_executor=executor_url,
+            desired_capabilities=caps
         )
+        if not mobile:
+            driver.maximize_window()
 
     driver.test_name = test_name
     driver.log_level = log_level
