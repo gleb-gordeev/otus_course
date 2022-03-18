@@ -1,4 +1,8 @@
 import logging
+
+import allure
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
@@ -32,8 +36,16 @@ class BasePage:
         find_field.send_keys(value)
 
     def is_present(self, locator):
-        self.logger.info("Check if element {} is present".format(locator))
-        return self.wait.until(EC.visibility_of_element_located(locator))
+        try:
+            self.logger.info("Check if element {} is present".format(locator))
+            return self.wait.until(EC.visibility_of_element_located(locator))
+        except NoSuchElementException or TimeoutException:
+            allure.attach(
+                name=self.browser.session_id,
+                body=self.browser.get_screenshot_as_png(),
+                attachment_type=allure.attachment_type.PNG
+            )
+            raise AssertionError(f"Element {locator} not found on page!")
 
     def _elements(self, locator):
         self.logger.info("Check if elements {} is present".format(locator))
