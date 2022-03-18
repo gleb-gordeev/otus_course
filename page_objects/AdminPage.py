@@ -77,10 +77,8 @@ class AdminPage(BasePage, SuccessAlert):
 
     def search_element(self, r_device_name):
         try:
-            search_device = self.is_present(
-                    (By.XPATH, f"//*[text()='{r_device_name}']")).text
+            search_device = self.is_present((By.XPATH, f"//*[text()='{r_device_name}']")).text
         except NoSuchElementException:
             self.last_page()
-            search_device = self.is_present(
-                    (By.XPATH, f"//*[text()='{r_device_name}']")).text
+            search_device = self.is_present((By.XPATH, f"//*[text()='{r_device_name}']")).text
         return search_device

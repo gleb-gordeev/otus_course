@@ -24,7 +24,7 @@ def get_environment(pytestconfig, request):
         'Browser.Version': request.config.getoption("--bversion"),
         'Executor': request.config.getoption("--executor"),
         'Stand': 'Production',
-        'Shell': os.getenv('SHELL')
+        'Shell': os.getenv('SHELL'),
     }
 
     tests_root = pytestconfig.rootdir
@@ -61,20 +61,13 @@ def browser(request):
         caps = {
             "browserName": browser,
             "name": "Gleb Gordeev",
-            "selenoid:options": {
-                    "enableVNC": True,
-                    "enableVideo": False,
-                    "enableLog": True
-                },
-            'goog:chromeOptions': {}
+            "selenoid:options": {"enableVNC": True, "enableVideo": False, "enableLog": True},
+            'goog:chromeOptions': {},
         }
         if browser == "chrome" and mobile:
             caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
 
-        driver = webdriver.Remote(
-            command_executor=executor_url,
-            desired_capabilities=caps
-        )
+        driver = webdriver.Remote(command_executor=executor_url, desired_capabilities=caps)
         if not mobile:
             driver.maximize_window()
 

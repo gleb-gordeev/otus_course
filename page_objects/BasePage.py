@@ -43,7 +43,7 @@ class BasePage:
             allure.attach(
                 name=self.browser.session_id,
                 body=self.browser.get_screenshot_as_png(),
-                attachment_type=allure.attachment_type.PNG
+                attachment_type=allure.attachment_type.PNG,
             )
             raise AssertionError(f"Element {locator} not found on page!")
 
