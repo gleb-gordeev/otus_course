@@ -4,8 +4,8 @@ from page_objects.BasePage import BasePage
 
 class CatalogPage(BasePage):
     HEADER = (By.CSS_SELECTOR, "div>h2")
-    SORT = (By.CSS_SELECTOR, "[for='input-sort']")
-    SHOW = (By.CSS_SELECTOR, "[for='input-limit']")
+    SORT = (By.CSS_SELECTOR, "[for='input-sort']1")
+    SHOW = (By.CSS_SELECTOR, "[for='input-limit']1")
     PRODUCTS_LIST = (By.CSS_SELECTOR, "div.product-layout")
     PRICES_LIST = (By.CSS_SELECTOR, "div>p.price")
 
