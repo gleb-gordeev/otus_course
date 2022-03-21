@@ -9,6 +9,16 @@ from selenium import webdriver
 DRIVERS = "C:/drivers"
 
 
+@allure.step('step in conftest.py')
+def conftest_step():
+    pass
+
+
+@pytest.fixture
+def fixture_conftest_step():
+    conftest_step()
+
+
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
     parser.addoption("--executor", action="store", default="192.168.1.105")

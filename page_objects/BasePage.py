@@ -20,14 +20,17 @@ class BasePage:
         self.logger.addHandler(logging.FileHandler(f"logs/{self.browser.test_name}.log"))
         self.logger.setLevel(level=self.browser.log_level)
 
+    @allure.step("Opening url: {url}")
     def open(self, url):
         self.logger.info("Opening url: {}".format(url))
         self.browser.get(url)
 
+    @allure.step("Clicking element: {locator}")
     def click(self, locator):
         self.logger.info("Clicking element: {}".format(locator))
         self.wait.until(EC.element_to_be_clickable(locator)).click()
 
+    @allure.step("Input {locator} in input {value}.")
     def input_and_submit(self, locator, value):
         self.logger.info("Input {} in input {}".format(value, locator))
         find_field = self.wait.until(EC.presence_of_element_located(locator))
@@ -35,6 +38,7 @@ class BasePage:
         find_field.clear()
         find_field.send_keys(value)
 
+    @allure.step("Verify element {locator} on page.")
     def is_present(self, locator):
         try:
             self.logger.info("Check if element {} is present".format(locator))
@@ -47,6 +51,7 @@ class BasePage:
             )
             raise AssertionError(f"Element {locator} not found on page!")
 
+    @allure.step("Check if elements {locator} is present.")
     def _elements(self, locator):
         self.logger.info("Check if elements {} is present".format(locator))
         return self.wait.until(
