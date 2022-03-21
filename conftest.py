@@ -12,6 +12,7 @@ DRIVERS = "C:/drivers"
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
     parser.addoption("--executor", action="store", default="192.168.1.105")
+    parser.addoption("--url", "-U", default="http://demo.opencart.com")
     parser.addoption("--log_level", action="store", default="DEBUG")
     parser.addoption("--mobile", action="store_true")
     parser.addoption("--bversion")
@@ -32,6 +33,11 @@ def get_environment(pytestconfig, request):
         env_props = '\n'.join([f'{k}={v}' for k, v in props.items()])
         f.write(env_props)
 
+    try:
+        os.mkdir("logs")
+    except Exception as e:
+        print(e)
+
 
 @pytest.fixture
 def browser(request):
@@ -39,6 +45,7 @@ def browser(request):
     executor = request.config.getoption("--executor")
     log_level = request.config.getoption("--log_level")
     mobile = request.config.getoption("--mobile")
+    url = request.config.getoption("--url")
     version = request.config.getoption("--bversion")
 
     logger = logging.getLogger('driver')
@@ -53,13 +60,16 @@ def browser(request):
         caps = {'goog:chromeOptions': {}}
         if mobile:
             caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
-        driver = webdriver.Chrome(desired_capabilities=caps)
+        driver = webdriver.Chrome(
+            executable_path=f"{DRIVERS}/chromedriver", desired_capabilities=caps
+        )
 
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
 
         caps = {
             "browserName": browser,
+            "browserVersion": version,
             "name": "Gleb Gordeev",
             "selenoid:options": {"enableVNC": True, "enableVideo": False, "enableLog": True},
             'goog:chromeOptions': {},
@@ -71,8 +81,13 @@ def browser(request):
         if not mobile:
             driver.maximize_window()
 
+    def open(path=""):
+        return driver.get(url + path)
+
     driver.test_name = test_name
     driver.log_level = log_level
+    driver.open = open
+    driver.open()
 
     logger.info("Browser:{}".format(browser, driver.desired_capabilities))
 
