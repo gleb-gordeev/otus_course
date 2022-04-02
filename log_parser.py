@@ -56,7 +56,7 @@ if os.path.isdir(args.file):
                             'ip': ip,
                             'date': date,
                             'method': method.group(1),
-                            'url': method.group(1),
+                            'url': url,
                             'duration': int(res),
                         }
                         top_res.append(res_line)
@@ -73,7 +73,7 @@ if os.path.isdir(args.file):
                                 'ip': ip,
                                 'date': date,
                                 'method': method.group(1),
-                                'url': method.group(1),
+                                'url': url,
                                 'duration': int(res),
                             }
                             top_res.append(res_line)
@@ -139,7 +139,7 @@ else:
                         'ip': ip,
                         'date': date,
                         'method': method.group(1),
-                        'url': method.group(1),
+                        'url': url,
                         'duration': int(res),
                     }
                     top_res.append(res_line)
@@ -156,7 +156,7 @@ else:
                             'ip': ip,
                             'date': date,
                             'method': method.group(1),
-                            'url': method.group(1),
+                            'url': url,
                             'duration': int(res),
                         }
                         top_res.append(res_line)
