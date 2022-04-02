@@ -75,6 +75,8 @@ else:
                 date = date_gr.group()
             if url_gr is not None:
                 url = url_gr.group()
+            else:
+                url = ''
             if ip_match is not None:
                 ip = ip_match.group()
                 method = re.search(r"\] \"(POST|GET|PUT|DELETE|HEAD|CONNECT|OPTIONS|TRACE)", line)
