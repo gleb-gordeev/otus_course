@@ -14,16 +14,16 @@ class IndexPage(BasePage):
     USD = (By.CSS_SELECTOR, "[name='USD']")
 
     def check_header(self):
-        self._element(self.HEADER)
+        self.is_present(self.HEADER)
 
     def check_cart_add_button(self):
-        self._element(self.CART_ADD_BUTTON)
+        self.is_present(self.CART_ADD_BUTTON)
 
     def check_wish_list_button(self):
-        self._element(self.WISH_LIST_BUTTON)
+        self.is_present(self.WISH_LIST_BUTTON)
 
     def check_compare_button(self):
-        self._element(self.COMPARE_BUTTON)
+        self.is_present(self.COMPARE_BUTTON)
 
     def check_products_list(self):
         all_list = self._elements(self.PRODUCTS_LIST)
@@ -31,9 +31,9 @@ class IndexPage(BasePage):
         return list_elements
 
     def change_currency(self):
-        self._click(self.CURRENCY)
-        self._click(self.EURO)
-        assert self._element(self.CURRENT_CURRENCY).text == "€"
-        self._click(self.CURRENCY)
-        self._click(self.USD)
-        assert self._element(self.CURRENT_CURRENCY).text == "$"
+        self.click(self.CURRENCY)
+        self.click(self.EURO)
+        assert self.is_present(self.CURRENT_CURRENCY).text == "€"
+        self.click(self.CURRENCY)
+        self.click(self.USD)
+        assert self.is_present(self.CURRENT_CURRENCY).text == "$"

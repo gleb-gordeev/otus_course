@@ -1,32 +1,60 @@
+import logging
+
+import allure
+from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
 class BasePage:
-    def __init__(self, browser):
+    def __init__(self, browser, wait=3):
         self.browser = browser
+        self.wait = WebDriverWait(browser, wait)
+        self.actions = ActionChains(browser)
+        self.__config_logger()
 
-    def _verify_element_presence(self, locator: tuple):
+    def __config_logger(self):
+        self.logger = logging.getLogger(type(self).__name__)
+        self.logger.addHandler(logging.FileHandler(f"logs/{self.browser.test_name}.log"))
+        self.logger.setLevel(level=self.browser.log_level)
+
+    @allure.step("Opening url: {url}")
+    def open(self, url):
+        self.logger.info("Opening url: {}".format(url))
+        self.browser.get(url)
+
+    @allure.step("Clicking element: {locator}")
+    def click(self, locator):
+        self.logger.info("Clicking element: {}".format(locator))
+        self.wait.until(EC.element_to_be_clickable(locator)).click()
+
+    @allure.step("Input {locator} in input {value}.")
+    def input_and_submit(self, locator, value):
+        self.logger.info("Input {} in input {}".format(value, locator))
+        find_field = self.wait.until(EC.presence_of_element_located(locator))
+        find_field.click()
+        find_field.clear()
+        find_field.send_keys(value)
+
+    @allure.step("Verify element {locator} on page.")
+    def is_present(self, locator):
         try:
-            return WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located(locator))
-        except TimeoutException:
-            raise AssertionError("Cant find element by locator: {}".format(locator))
+            self.logger.info("Check if element {} is present".format(locator))
+            return self.wait.until(EC.visibility_of_element_located(locator))
+        except NoSuchElementException or TimeoutException:
+            allure.attach(
+                name=self.browser.session_id,
+                body=self.browser.get_screenshot_as_png(),
+                attachment_type=allure.attachment_type.PNG,
+            )
+            raise AssertionError(f"Element {locator} not found on page!")
 
-    def _element(self, locator: tuple):
-        return self._verify_element_presence(locator)
-
-    def _simple_click_element(self, element):
-        element.click()
-
-    def _click(self, locator: tuple):
-        element = self._element(locator)
-        ActionChains(self.browser).move_to_element(element).click().perform()
-
-    def _elements(self, locator, time=10):
-        return WebDriverWait(self.browser, time).until(
+    @allure.step("Check if elements {locator} is present.")
+    def _elements(self, locator):
+        self.logger.info("Check if elements {} is present".format(locator))
+        return self.wait.until(
             EC.presence_of_all_elements_located(locator),
             message=f"Can't find elements by locator {locator}",
         )

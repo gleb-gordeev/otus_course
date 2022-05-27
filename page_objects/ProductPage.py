@@ -10,16 +10,16 @@ class ProductPage(BasePage):
     CASE_DESCRIPTION = (By.CSS_SELECTOR, "p:nth-child(6)")
 
     def check_product_name(self):
-        self._element(self.PRODUCT_NAME)
+        self.is_present(self.PRODUCT_NAME)
 
     def check_price(self):
-        self._element(self.PRICE)
+        self.is_present(self.PRICE)
 
     def check_processor_description(self):
-        self._element(self.PROCESSOR_DESCRIPTION)
+        self.is_present(self.PROCESSOR_DESCRIPTION)
 
     def check_memory_description(self):
-        self._element(self.MEMORY_DESCRIPTION)
+        self.is_present(self.MEMORY_DESCRIPTION)
 
     def check_case_description(self):
-        self._element(self.CASE_DESCRIPTION)
+        self.is_present(self.CASE_DESCRIPTION)

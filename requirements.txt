@@ -1,2 +1,7 @@
+pytest==6.2.5
 selenium==4.1.0
-pytest==7.0.0
+requests==2.26.0
+pytest-xdist==2.4.0
+browsermob-proxy==0.8.0
+mitmproxy==7.0.4
+allure-pytest==2.9.45
